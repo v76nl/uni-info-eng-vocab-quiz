@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+
+# Build Output & Cache
+dist/
+dist-ssr/
+.cache/
+*.tsbuildinfo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment Variables (Secrets)
+.env
+.env.*
+*.local
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+
+# JetBrains / IntelliJ
+.idea/
+
+# Visual Studio
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Vim / Vi
+*.swp
+*.swo
+*.sw?
+
+# Temporary Files
+tree.txt
+
+# coding agent
+.agent/
