@@ -32,6 +32,13 @@ button {
     cursor: pointer;
 }
 
+button:hover {
+    background-color: var(--itl-red);
+    color: var(--itl-white);
+    border-color: var(--itl-white);
+    font-weight: bold;
+}
+
 #question {
     font-size: 24px;
     margin-bottom: 20px;
