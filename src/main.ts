@@ -80,7 +80,7 @@ function showQuestion(): void {
 
     const questionEl = document.getElementById("question");
     if (questionEl) {
-        questionEl.textContent = `${current.word} の意味は？`;
+        questionEl.textContent = `${current.word}`;
     }
 
     const feedbackEl = document.getElementById("feedback");
