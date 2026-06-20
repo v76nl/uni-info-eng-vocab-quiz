@@ -1,6 +1,8 @@
 # uni-info-eng-vocab-quiz
 
-try: https://v76nl.github.io/uni-info-eng-vocab-quiz/
+講義「情報英語」の語彙テスト対策用Webアプリ。  
+グループでの単語リスト作成のため、Googleスプレッドシートを使用している。  
+<https://v76nl.github.io/uni-info-eng-vocab-quiz/>
 
 ## 使い方
 
