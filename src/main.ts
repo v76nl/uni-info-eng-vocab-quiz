@@ -10,12 +10,95 @@ let quizData: QuizItem[] = [];
 let currentQuestionIndex = -1;
 const recentIndices: number[] = [];
 
+function initNavigation(): void {
+    const btnQuiz = document.getElementById("btn-quiz");
+    const btnList = document.getElementById("btn-list");
+    const quizContainer = document.getElementById("quiz-container");
+    const listContainer = document.getElementById("list-container");
+
+    if (btnQuiz && btnList && quizContainer && listContainer) {
+        btnQuiz.addEventListener("click", () => {
+            quizContainer.classList.remove("hidden");
+            listContainer.classList.add("hidden");
+            btnQuiz.classList.add("active");
+            btnList.classList.remove("active");
+        });
+
+        btnList.addEventListener("click", () => {
+            quizContainer.classList.add("hidden");
+            listContainer.classList.remove("hidden");
+            btnQuiz.classList.remove("active");
+            btnList.classList.add("active");
+            // 切り替え時にリストを再描画する
+            renderVocabList();
+        });
+    }
+}
+
+function initTableScrollListener(): void {
+    const wrapper = document.querySelector(".table-wrapper");
+    const container = document.querySelector(".scroll-fade-container");
+    if (!wrapper || !container) return;
+
+    // 初期状態のチェック (データ数が少なくスクロール不要な場合に対応)
+    checkScrollShadows(wrapper, container);
+
+    wrapper.addEventListener("scroll", () => {
+        checkScrollShadows(wrapper, container);
+    });
+}
+
+function checkScrollShadows(wrapper: Element, container: Element): void {
+    const scrollTop = wrapper.scrollTop;
+    const clientHeight = wrapper.clientHeight;
+    const scrollHeight = wrapper.scrollHeight;
+
+    // コンテンツ全体が表示領域に収まっており、スクロール不要な場合
+    if (scrollHeight <= clientHeight) {
+        container.classList.remove("show-bottom-shadow");
+        return;
+    }
+
+    // 下側の影：最下部に到達していなければ表示する
+    const isBottom = scrollTop + clientHeight >= scrollHeight - 5;
+    if (isBottom) {
+        container.classList.remove("show-bottom-shadow");
+    } else {
+        container.classList.add("show-bottom-shadow");
+    }
+}
+
+function renderVocabList(): void {
+    const tbody = document.getElementById("vocab-list-body");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+    quizData.forEach((item) => {
+        const tr = document.createElement("tr");
+
+        const tdWord = document.createElement("td");
+        tdWord.textContent = item.word;
+
+        const tdDef = document.createElement("td");
+        tdDef.textContent = item.definition;
+
+        tr.appendChild(tdWord);
+        tr.appendChild(tdDef);
+        tbody.appendChild(tr);
+    });
+
+    // リスト描画後にスクロール監視を初期化する
+    initTableScrollListener();
+}
+
 async function fetchQuizData(): Promise<void> {
     const questionEl = document.getElementById("question");
     try {
         const response = await fetch(CSV_URL);
         const csvText = await response.text();
         quizData = parseCSV(csvText);
+        initNavigation();
+        renderVocabList();
         startQuiz();
     } catch (error) {
         if (questionEl) {

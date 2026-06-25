@@ -26,12 +26,32 @@
         />
     </head>
     <body>
+        <nav id="nav-menu">
+            <button id="btn-quiz" class="nav-btn active">クイズ</button>
+            <button id="btn-list" class="nav-btn">単語一覧</button>
+        </nav>
         <div id="app">
             <h1 id="header-title">情報英語 単語クイズ</h1>
             <div id="quiz-container">
                 <p id="question">読み込み中...</p>
                 <div id="options"></div>
                 <p id="feedback"></p>
+            </div>
+            <div id="list-container" class="hidden">
+                <h2>収録単語一覧</h2>
+                <div class="scroll-fade-container">
+                    <div class="table-wrapper">
+                        <table id="vocab-table">
+                            <thead>
+                                <tr>
+                                    <th>単語</th>
+                                    <th>意味</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vocab-list-body"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
         <footer>
