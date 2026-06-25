@@ -93,6 +93,7 @@ function showQuestion(): void {
     const feedbackEl = document.getElementById("feedback");
     if (feedbackEl) {
         feedbackEl.textContent = "";
+        feedbackEl.classList.remove("fade-out");
     }
 
     const optionsContainer = document.getElementById("options");
@@ -137,11 +138,19 @@ function checkAnswer(selected: string, correct: string): void {
             feedback.style.color = "var(--itl-red)";
             delay = 1000; // 正解時は1秒に短縮
         } else {
-            feedback.innerHTML = `不正解……正解は「<span style="color: var(--itl-red);">${correct}</span>」`;
+            feedback.innerHTML = `不正解……正解は「<span style="color: var(--itl-red); font-weight: bold;">${correct}</span>」`;
             feedback.style.color = "var(--itl-black)";
             delay = 3000; // 不正解時は3秒に延長
         }
     }
+
+    // 次の問題に進む500ms前にフィードバックをフェードアウトする (正解時・不正解時それぞれの遅延時間に基づく)
+    const fadeOutDelay = Math.max(0, delay - 500);
+    setTimeout(() => {
+        if (feedback) {
+            feedback.classList.add("fade-out");
+        }
+    }, fadeOutDelay);
 
     setTimeout(() => {
         currentQuestionIndex = selectNextQuestionIndex();

@@ -47,6 +47,12 @@ button:hover {
 #feedback {
     font-size: 24px;
     height: 36px;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+#feedback.fade-out {
+    opacity: 0;
 }
 
 footer {
