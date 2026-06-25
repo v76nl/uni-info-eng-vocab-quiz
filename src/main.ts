@@ -136,7 +136,7 @@ function checkAnswer(selected: string, correct: string): void {
         if (selected === correct) {
             feedback.textContent = "正解！";
             feedback.style.color = "var(--itl-red)";
-            delay = 1000; // 正解時は1秒に短縮
+            delay = 1200; // 正解時は1.2秒に短縮
         } else {
             feedback.innerHTML = `不正解……正解は「<span style="color: var(--itl-red); font-weight: bold;">${correct}</span>」`;
             feedback.style.color = "var(--itl-black)";
@@ -144,8 +144,8 @@ function checkAnswer(selected: string, correct: string): void {
         }
     }
 
-    // 次の問題に進む500ms前にフィードバックをフェードアウトする (正解時・不正解時それぞれの遅延時間に基づく)
-    const fadeOutDelay = Math.max(0, delay - 500);
+    // 次の問題に進む200ms前にフィードバックをフェードアウトする (正解時・不正解時それぞれの遅延時間に基づく)
+    const fadeOutDelay = Math.max(0, delay - 200);
     setTimeout(() => {
         if (feedback) {
             feedback.classList.add("fade-out");
