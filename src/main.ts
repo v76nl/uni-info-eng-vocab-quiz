@@ -137,7 +137,7 @@ function checkAnswer(selected: string, correct: string): void {
             feedback.style.color = "var(--itl-red)";
             delay = 1000; // 正解時は1秒に短縮
         } else {
-            feedback.textContent = `不正解……正解は「${correct}」`;
+            feedback.innerHTML = `不正解……正解は「<span style="color: var(--itl-red);">${correct}</span>」`;
             feedback.style.color = "var(--itl-black)";
             delay = 3000; // 不正解時は3秒に延長
         }
