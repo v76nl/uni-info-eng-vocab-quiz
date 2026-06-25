@@ -130,13 +130,16 @@ function generateOptions(correctAnswer: string): string[] {
 
 function checkAnswer(selected: string, correct: string): void {
     const feedback = document.getElementById("feedback");
+    let delay = 2000; // デフォルト値 (2秒)
     if (feedback) {
         if (selected === correct) {
             feedback.textContent = "正解！";
             feedback.style.color = "var(--itl-red)";
+            delay = 1000; // 正解時は1秒に短縮
         } else {
             feedback.textContent = `不正解……正解は「${correct}」`;
             feedback.style.color = "var(--itl-black)";
+            delay = 3000; // 不正解時は3秒に延長
         }
     }
 
@@ -145,7 +148,7 @@ function checkAnswer(selected: string, correct: string): void {
         if (currentQuestionIndex !== -1) {
             showQuestion();
         }
-    }, 2000);
+    }, delay);
 }
 
 fetchQuizData();
