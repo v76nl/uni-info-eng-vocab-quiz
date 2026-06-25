@@ -71,6 +71,13 @@ function startQuiz(): void {
     currentQuestionIndex = selectNextQuestionIndex();
     if (currentQuestionIndex !== -1) {
         showQuestion();
+        // クイズ開始後、ヘッダーをフェードアウトする (1.5秒後)
+        setTimeout(() => {
+            const titleEl = document.getElementById("header-title");
+            if (titleEl) {
+                titleEl.classList.add("fade-out");
+            }
+        }, 1500);
     }
 }
 
