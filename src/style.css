@@ -12,6 +12,7 @@ body {
     flex-direction: column;
     align-items: center;
     min-height: 100vh;
+    min-height: 100dvh; /* スマホのアドレスバー高さを考慮した動的ビューポート */
     margin: 0;
     padding-top: 60px; /* 固定ヘッダーの高さ分の余白 */
     box-sizing: border-box;
@@ -27,7 +28,13 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+}
+
+/* コンテナを安全に上下中央配置する（画面が狭くはみ出す場合の上部見切れを防ぐ） */
+#quiz-container,
+#list-container {
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 button {

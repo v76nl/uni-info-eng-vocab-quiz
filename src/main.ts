@@ -159,6 +159,10 @@ function startQuiz(): void {
             const titleEl = document.getElementById("header-title");
             if (titleEl) {
                 titleEl.classList.add("fade-out");
+                // トランジション完了後(1秒後)に要素を完全に非表示にし、レイアウト干渉を防ぐ
+                setTimeout(() => {
+                    titleEl.classList.add("hidden");
+                }, 1000);
             }
         }, 1500);
     }
