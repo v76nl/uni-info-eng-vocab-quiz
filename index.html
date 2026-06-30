@@ -24,11 +24,25 @@
             rel="stylesheet"
             href="/src/style.css"
         />
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❓</text></svg>"
+        />
     </head>
     <body>
         <nav id="nav-menu">
-            <button id="btn-quiz" class="nav-btn active">クイズ</button>
-            <button id="btn-list" class="nav-btn">単語一覧</button>
+            <button
+                id="btn-quiz"
+                class="nav-btn active"
+            >
+                クイズ
+            </button>
+            <button
+                id="btn-list"
+                class="nav-btn"
+            >
+                単語一覧
+            </button>
         </nav>
         <div id="app">
             <h1 id="header-title">情報英語 単語クイズ</h1>
@@ -37,7 +51,10 @@
                 <div id="options"></div>
                 <p id="feedback"></p>
             </div>
-            <div id="list-container" class="hidden">
+            <div
+                id="list-container"
+                class="hidden"
+            >
                 <h2>収録単語一覧</h2>
                 <div class="scroll-fade-container">
                     <div class="table-wrapper">
