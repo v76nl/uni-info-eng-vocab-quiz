@@ -1,13 +1,44 @@
 :root {
+    /* ブランドカラーの定義（固定） */
     --itl-red: #e83421;
     --itl-white: #e9e5e2;
     --itl-black: #000000;
+
+    /* セマンティック変数（ライトテーマ基準） */
+    --bg-color: var(--itl-white);
+    --text-color: var(--itl-black);
+    --accent-red: var(--itl-red);
+
+    --gray-bg: #f2f2f2; /* テーブル・メニュー背景色 */
+    --border-light: #ddd; /* 薄い境界線 */
+    --border-dashed: #999; /* 破線 */
+    --shadow: rgba(0, 0, 0, 0.15); /* スクロールシャドウ */
+    --button-bg: #ffffff; /* ボタン背景色 */
+    --button-border: #cccccc; /* ボタン枠線 */
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* ダークテーマ時の割り当て変更 */
+        --bg-color: var(--itl-black); /* 背景色をブランドカラーの黒に */
+        --text-color: var(
+            --itl-white
+        ); /* テキスト色をブランドカラーの白（ベージュ）に */
+        --accent-red: #ff4d4d; /* ダーク用に少し視認性を上げた赤 */
+
+        --gray-bg: #1c1c1c; /* ダークテーマ用の少し明るいテーブル・メニュー背景 */
+        --border-light: #333333;
+        --border-dashed: #666666;
+        --shadow: rgba(0, 0, 0, 0.6);
+        --button-bg: #1c1c1c;
+        --button-border: #333333;
+    }
 }
 
 body {
     font-family: "Zen Maru Gothic", sans-serif;
-    background-color: var(--itl-white);
-    color: var(--itl-black);
+    background-color: var(--bg-color);
+    color: var(--text-color);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -17,6 +48,9 @@ body {
     padding-top: 60px; /* 固定ヘッダーの高さ分の余白 */
     box-sizing: border-box;
     position: relative;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
 }
 
 #app {
@@ -45,12 +79,18 @@ button {
     padding: 10px;
     font-size: 16px;
     cursor: pointer;
+    background-color: var(--button-bg);
+    color: var(--text-color);
+    border: 1px solid var(--text-color); /* 枠線をテキスト色で明示 */
+    transition: all 0.2s ease;
 }
 
-button:hover {
-    background-color: var(--itl-red);
-    color: var(--itl-white);
-    border-color: var(--itl-white);
+button:hover,
+button:focus,
+button:active {
+    background-color: var(--accent-red);
+    color: #ffffff; /* 赤背景の上で常に視認性を保つため白文字に固定 */
+    border-color: #ffffff;
     font-weight: bold;
 }
 
@@ -77,7 +117,7 @@ footer {
 }
 
 footer a {
-    color: var(--itl-black);
+    color: var(--text-color);
     opacity: 0.6;
     transition:
         opacity 0.2s ease,
@@ -121,8 +161,8 @@ footer a:hover {
     width: 100%;
     display: flex;
     justify-content: space-around;
-    background-color: #f2f2f2;
-    border-bottom: 1px solid var(--itl-black);
+    background-color: var(--gray-bg);
+    border-bottom: 1px solid var(--text-color);
     z-index: 100;
 }
 
@@ -136,20 +176,20 @@ footer a:hover {
     font-weight: 500;
     border: none;
     background-color: transparent;
-    color: var(--itl-black);
+    color: var(--text-color);
     transition: all 0.2s ease;
     cursor: pointer;
 }
 
 .nav-btn.active {
-    background-color: var(--itl-black);
-    color: var(--itl-white);
+    background-color: var(--text-color);
+    color: var(--bg-color);
     font-weight: bold;
 }
 
 .nav-btn:not(.active):hover {
-    background-color: var(--itl-red);
-    color: var(--itl-white);
+    background-color: var(--accent-red);
+    color: #ffffff; /* 赤背景の上で常に視認性を保つため白文字に固定 */
 }
 
 #list-container {
@@ -166,7 +206,7 @@ footer a:hover {
 
 .scroll-fade-container {
     position: relative;
-    border: 1px solid var(--itl-black);
+    border: 1px solid var(--text-color);
     border-radius: 4px;
     overflow: hidden;
 }
@@ -183,11 +223,7 @@ footer a:hover {
     z-index: 5;
     transition: opacity 0.2s ease;
     opacity: 0;
-    background: linear-gradient(
-        to top,
-        rgba(0, 0, 0, 0.15) 0%,
-        rgba(0, 0, 0, 0) 100%
-    );
+    background: linear-gradient(to top, var(--shadow) 0%, transparent 100%);
 }
 
 .scroll-fade-container.show-bottom-shadow::after {
@@ -211,19 +247,19 @@ table {
 }
 
 #vocab-table {
-    background-color: #f2f2f2;
+    background-color: var(--gray-bg);
 }
 
 th,
 td {
     padding: 10px 12px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--border-light);
     font-size: 14px;
 }
 
 th {
-    background-color: var(--itl-red);
-    color: var(--itl-white);
+    background-color: var(--accent-red);
+    color: #ffffff; /* 赤背景の上で常に視認性を保つため白文字に固定 */
     font-weight: bold;
     position: sticky;
     top: 0;
@@ -233,7 +269,7 @@ th {
 
 #vocab-table th:first-child,
 #vocab-table td:first-child {
-    border-right: 1px dashed #999;
+    border-right: 1px dashed var(--border-dashed);
 }
 
 tr:last-child td {

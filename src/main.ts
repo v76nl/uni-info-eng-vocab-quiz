@@ -222,11 +222,11 @@ function checkAnswer(selected: string, correct: string): void {
     if (feedback) {
         if (selected === correct) {
             feedback.textContent = "正解！";
-            feedback.style.color = "var(--itl-red)";
+            feedback.style.color = "var(--accent-red)";
             delay = 1200; // 正解時は1.2秒に短縮
         } else {
-            feedback.innerHTML = `不正解……正解は「<span style="color: var(--itl-red); font-weight: bold;">${correct}</span>」`;
-            feedback.style.color = "var(--itl-black)";
+            feedback.innerHTML = `不正解……正解は「<span style="color: var(--accent-red); font-weight: bold;">${correct}</span>」`;
+            feedback.style.color = "var(--text-color)";
             delay = 3000; // 不正解時は3秒に延長
         }
     }
