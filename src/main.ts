@@ -204,6 +204,7 @@ async function fetchQuizData(): Promise<void> {
         renderVocabList();
         renderWordbook();
         initSkipButton(); // スキップボタンの初期化
+        initKeyboardShortcuts(); // キーボードショートカットの初期化
         startQuiz();
     } catch (error) {
         if (questionEl) {
@@ -366,11 +367,11 @@ function checkAnswer(selected: string, correct: string): void {
         if (isCorrect) {
             feedback.textContent = "正解！";
             feedback.style.color = "var(--accent-red)";
-            delay = 1200; // 正解時は1.2秒に短縮
+            delay = 1000; // 正解時は短縮
         } else {
             feedback.innerHTML = `不正解……正解は「<span style="color: var(--accent-red); font-weight: bold;">${correct}</span>」`;
             feedback.style.color = "var(--text-color)";
-            delay = 3000; // 不正解時は3秒に延長
+            delay = 3000; // 不正解時は延長
         }
     }
 
@@ -428,6 +429,41 @@ function initSkipButton(): void {
             }
         });
     }
+}
+
+function initKeyboardShortcuts(): void {
+    document.addEventListener("keydown", (e) => {
+        // クイズコンテナが表示されている場合のみ反応させる
+        const quizContainer = document.getElementById("quiz-container");
+        if (quizContainer && quizContainer.classList.contains("hidden")) {
+            return;
+        }
+
+        const key = e.key;
+        if (["1", "2", "3", "4"].includes(key)) {
+            const index = parseInt(key, 10) - 1;
+            const optionsContainer = document.getElementById("options");
+            if (optionsContainer) {
+                const buttons = optionsContainer.querySelectorAll("button");
+                const targetButton = buttons[index] as HTMLButtonElement | undefined;
+                
+                // ボタンが存在し、かつ非活性状態でなければクリックを発火
+                if (targetButton && !targetButton.disabled) {
+                    targetButton.click();
+                }
+            }
+        } else if (key === "5" || key === " " || key === "Spacebar") {
+            // スキップのショートカット (5 または スペースキー)
+            if (key === " " || key === "Spacebar") {
+                e.preventDefault(); // スペースキーによる画面スクロールを防止
+            }
+            
+            const btnSkip = document.getElementById("btn-skip") as HTMLButtonElement | null;
+            if (btnSkip && !btnSkip.disabled) {
+                btnSkip.click();
+            }
+        }
+    });
 }
 
 fetchQuizData();
