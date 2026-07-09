@@ -12,22 +12,46 @@ const recentIndices: number[] = [];
 
 function initNavigation(): void {
     const btnQuiz = document.getElementById("btn-quiz");
+    const btnWordbook = document.getElementById("btn-wordbook");
     const btnList = document.getElementById("btn-list");
     const quizContainer = document.getElementById("quiz-container");
+    const wordbookContainer = document.getElementById("wordbook-container");
     const listContainer = document.getElementById("list-container");
 
-    if (btnQuiz && btnList && quizContainer && listContainer) {
+    if (
+        btnQuiz &&
+        btnWordbook &&
+        btnList &&
+        quizContainer &&
+        wordbookContainer &&
+        listContainer
+    ) {
         btnQuiz.addEventListener("click", () => {
             quizContainer.classList.remove("hidden");
+            wordbookContainer.classList.add("hidden");
             listContainer.classList.add("hidden");
             btnQuiz.classList.add("active");
+            btnWordbook.classList.remove("active");
             btnList.classList.remove("active");
+        });
+
+        btnWordbook.addEventListener("click", () => {
+            quizContainer.classList.add("hidden");
+            wordbookContainer.classList.remove("hidden");
+            listContainer.classList.add("hidden");
+            btnQuiz.classList.remove("active");
+            btnWordbook.classList.add("active");
+            btnList.classList.remove("active");
+            // 切り替え時に単語帳を再描画する
+            renderWordbook();
         });
 
         btnList.addEventListener("click", () => {
             quizContainer.classList.add("hidden");
+            wordbookContainer.classList.add("hidden");
             listContainer.classList.remove("hidden");
             btnQuiz.classList.remove("active");
+            btnWordbook.classList.remove("active");
             btnList.classList.add("active");
             // 切り替え時にリストを再描画する
             renderVocabList();
@@ -35,16 +59,18 @@ function initNavigation(): void {
     }
 }
 
-function initTableScrollListener(): void {
-    const wrapper = document.querySelector(".table-wrapper");
-    const container = document.querySelector(".scroll-fade-container");
-    if (!wrapper || !container) return;
+function initTableScrollListeners(): void {
+    const containers = document.querySelectorAll(".scroll-fade-container");
+    containers.forEach((container) => {
+        const wrapper = container.querySelector(".table-wrapper");
+        if (!wrapper) return;
 
-    // 初期状態のチェック (データ数が少なくスクロール不要な場合に対応)
-    checkScrollShadows(wrapper, container);
-
-    wrapper.addEventListener("scroll", () => {
+        // 初期状態のチェック (データ数が少なくスクロール不要な場合に対応)
         checkScrollShadows(wrapper, container);
+
+        wrapper.addEventListener("scroll", () => {
+            checkScrollShadows(wrapper, container);
+        });
     });
 }
 
@@ -88,7 +114,48 @@ function renderVocabList(): void {
     });
 
     // リスト描画後にスクロール監視を初期化する
-    initTableScrollListener();
+    initTableScrollListeners();
+}
+
+function renderWordbook(): void {
+    const tbody = document.getElementById("wordbook-list-body");
+    if (!tbody) return;
+
+    tbody.innerHTML = "";
+    quizData.forEach((item) => {
+        const tr = document.createElement("tr");
+
+        const tdWord = document.createElement("td");
+        tdWord.textContent = item.word;
+
+        const tdDef = document.createElement("td");
+        
+        // マスクラッパー
+        const maskWrapper = document.createElement("span");
+        maskWrapper.className = "wordbook-mask";
+        
+        // 意味テキスト本体
+        const textSpan = document.createElement("span");
+        textSpan.className = "wordbook-text";
+        textSpan.textContent = item.definition;
+        
+        maskWrapper.appendChild(textSpan);
+        
+        // タップ時にマスクを解除
+        tdDef.addEventListener("click", () => {
+            if (!maskWrapper.classList.contains("revealed")) {
+                maskWrapper.classList.add("revealed");
+            }
+        });
+
+        tdDef.appendChild(maskWrapper);
+        tr.appendChild(tdWord);
+        tr.appendChild(tdDef);
+        tbody.appendChild(tr);
+    });
+
+    // 単語帳描画後にスクロール監視を初期化する
+    initTableScrollListeners();
 }
 
 async function fetchQuizData(): Promise<void> {
@@ -99,6 +166,7 @@ async function fetchQuizData(): Promise<void> {
         quizData = parseCSV(csvText);
         initNavigation();
         renderVocabList();
+        renderWordbook();
         startQuiz();
     } catch (error) {
         if (questionEl) {
