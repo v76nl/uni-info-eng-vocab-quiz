@@ -333,3 +333,51 @@ tr:last-child td {
 .wordbook-mask.revealed::after {
     transform: scaleX(0); /* 左から右に向かって 0 に縮小 */
 }
+
+/* スキップボタン用スタイル */
+.skip-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    color: var(--text-color);
+    opacity: 0.6;
+    margin: 25px auto 0 auto; /* 中央寄せにし、選択肢から十分な余裕を持つ */
+    width: fit-content;
+    padding: 10px 20px; /* タップしやすさを考慮した広めの余白 */
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.skip-btn::after {
+    content: " »";
+    margin-left: 6px;
+    font-size: 16px;
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+.skip-btn:hover,
+.skip-btn:focus,
+.skip-btn:active {
+    background-color: transparent;
+    color: var(--text-color);
+    border: none;
+    opacity: 1;
+}
+
+.skip-btn:hover::after {
+    transform: translateX(4px);
+}
+
+/* 非活性時のスタイル調整 */
+button:disabled {
+    cursor: default;
+    opacity: 0.5;
+    pointer-events: none;
+}
