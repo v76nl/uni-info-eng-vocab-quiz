@@ -467,3 +467,27 @@ function initKeyboardShortcuts(): void {
 }
 
 fetchQuizData();
+
+// --- Debug Tools ---
+(window as any).printWeights = (sortBy: "default" | "weight" = "default") => {
+    const list = quizData.map((item) => ({
+        Word: item.word,
+        Weight: getWeight(item.word),
+        Definition: item.definition,
+    }));
+
+    if (sortBy === "weight") {
+        list.sort((a, b) => {
+            if (b.Weight !== a.Weight) {
+                return b.Weight - a.Weight; // 降順（出題されやすい順）
+            }
+            return a.Word.localeCompare(b.Word);
+        });
+    }
+
+    console.table(list);
+    console.log(`💡 Hint: \`pww()\` で重み順にソートできます。`);
+};
+
+(window as any).pw = () => (window as any).printWeights();
+(window as any).pww = () => (window as any).printWeights("weight");
