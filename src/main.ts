@@ -10,6 +10,41 @@ let quizData: QuizItem[] = [];
 let currentQuestionIndex = -1;
 const recentIndices: number[] = [];
 
+let wordWeights: Record<string, number> = {};
+const DEFAULT_WEIGHT = 10;
+const WEIGHT_STORAGE_KEY = "quiz_word_weights";
+
+function loadWeights(): void {
+    const saved = localStorage.getItem(WEIGHT_STORAGE_KEY);
+    if (saved) {
+        try {
+            wordWeights = JSON.parse(saved);
+        } catch (e) {
+            wordWeights = {};
+        }
+    }
+}
+
+function saveWeights(): void {
+    localStorage.setItem(WEIGHT_STORAGE_KEY, JSON.stringify(wordWeights));
+}
+
+function getWeight(word: string): number {
+    return wordWeights[word] !== undefined ? wordWeights[word] : DEFAULT_WEIGHT;
+}
+
+function updateWeight(word: string, isCorrect: boolean): void {
+    const currentWeight = getWeight(word);
+    if (isCorrect) {
+        // 正解したら重みを減らす（最小値1）
+        wordWeights[word] = Math.max(1, Math.floor(currentWeight / 2));
+    } else {
+        // 不正解・スキップしたら重みを増やす（最大値20）
+        wordWeights[word] = Math.min(20, currentWeight + 5);
+    }
+    saveWeights();
+}
+
 function initNavigation(): void {
     const btnQuiz = document.getElementById("btn-quiz");
     const btnWordbook = document.getElementById("btn-wordbook");
@@ -164,6 +199,7 @@ async function fetchQuizData(): Promise<void> {
         const response = await fetch(CSV_URL);
         const csvText = await response.text();
         quizData = parseCSV(csvText);
+        loadWeights();
         initNavigation();
         renderVocabList();
         renderWordbook();
@@ -193,13 +229,18 @@ function selectNextQuestionIndex(): number {
     if (quizData.length === 0) return -1;
 
     // Determine history limit based on question pool size (max 2)
-    // If we only have 2 questions, history limit should be 1. If 1 question, limit is 0.
     const maxRecentLength = Math.max(0, Math.min(2, quizData.length - 1));
 
     const availableIndices: number[] = [];
+    const cumulativeWeights: number[] = [];
+    let totalWeight = 0;
+
     for (let i = 0; i < quizData.length; i++) {
         if (!recentIndices.includes(i)) {
             availableIndices.push(i);
+            const w = getWeight(quizData[i].word);
+            totalWeight += w;
+            cumulativeWeights.push(totalWeight);
         }
     }
 
@@ -207,8 +248,15 @@ function selectNextQuestionIndex(): number {
         return Math.floor(Math.random() * quizData.length);
     }
 
-    const randomIndex = Math.floor(Math.random() * availableIndices.length);
-    const chosenIndex = availableIndices[randomIndex];
+    // Weighted random selection
+    const r = Math.random() * totalWeight;
+    let chosenIndex = availableIndices[0];
+    for (let j = 0; j < cumulativeWeights.length; j++) {
+        if (r < cumulativeWeights[j]) {
+            chosenIndex = availableIndices[j];
+            break;
+        }
+    }
 
     recentIndices.push(chosenIndex);
     if (recentIndices.length > maxRecentLength) {
@@ -308,10 +356,14 @@ function disableAllQuizButtons(): void {
 function checkAnswer(selected: string, correct: string): void {
     disableAllQuizButtons();
 
+    const currentWord = quizData[currentQuestionIndex].word;
+    const isCorrect = (selected === correct);
+    updateWeight(currentWord, isCorrect);
+
     const feedback = document.getElementById("feedback");
     let delay = 2000; // デフォルト値 (2秒)
     if (feedback) {
-        if (selected === correct) {
+        if (isCorrect) {
             feedback.textContent = "正解！";
             feedback.style.color = "var(--accent-red)";
             delay = 1200; // 正解時は1.2秒に短縮
@@ -340,6 +392,9 @@ function checkAnswer(selected: string, correct: string): void {
 
 function handleSkip(correct: string): void {
     disableAllQuizButtons();
+
+    const currentWord = quizData[currentQuestionIndex].word;
+    updateWeight(currentWord, false);
 
     const feedback = document.getElementById("feedback");
     const delay = 2000; // スキップ時は2秒表示して次へ
