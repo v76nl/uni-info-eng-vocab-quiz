@@ -167,6 +167,7 @@ async function fetchQuizData(): Promise<void> {
         initNavigation();
         renderVocabList();
         renderWordbook();
+        initSkipButton(); // スキップボタンの初期化
         startQuiz();
     } catch (error) {
         if (questionEl) {
@@ -265,6 +266,12 @@ function showQuestion(): void {
             optionsContainer.appendChild(button);
         });
     }
+
+    // スキップボタンを活性化
+    const btnSkip = document.getElementById("btn-skip") as HTMLButtonElement | null;
+    if (btnSkip) {
+        btnSkip.disabled = false;
+    }
 }
 
 function generateOptions(correctAnswer: string): string[] {
@@ -284,7 +291,23 @@ function generateOptions(correctAnswer: string): string[] {
     return choices.sort(() => 0.5 - Math.random());
 }
 
+function disableAllQuizButtons(): void {
+    const optionsContainer = document.getElementById("options");
+    if (optionsContainer) {
+        const buttons = optionsContainer.querySelectorAll("button");
+        buttons.forEach((btn) => {
+            btn.disabled = true;
+        });
+    }
+    const btnSkip = document.getElementById("btn-skip") as HTMLButtonElement | null;
+    if (btnSkip) {
+        btnSkip.disabled = true;
+    }
+}
+
 function checkAnswer(selected: string, correct: string): void {
+    disableAllQuizButtons();
+
     const feedback = document.getElementById("feedback");
     let delay = 2000; // デフォルト値 (2秒)
     if (feedback) {
@@ -313,6 +336,43 @@ function checkAnswer(selected: string, correct: string): void {
             showQuestion();
         }
     }, delay);
+}
+
+function handleSkip(correct: string): void {
+    disableAllQuizButtons();
+
+    const feedback = document.getElementById("feedback");
+    const delay = 2000; // スキップ時は2秒表示して次へ
+    if (feedback) {
+        feedback.innerHTML = `スキップしました。<br>正解は「<span style="color: var(--accent-red); font-weight: bold;">${correct}</span>」`;
+        feedback.style.color = "var(--text-color)";
+    }
+
+    const fadeOutDelay = Math.max(0, delay - 200);
+    setTimeout(() => {
+        if (feedback) {
+            feedback.classList.add("fade-out");
+        }
+    }, fadeOutDelay);
+
+    setTimeout(() => {
+        currentQuestionIndex = selectNextQuestionIndex();
+        if (currentQuestionIndex !== -1) {
+            showQuestion();
+        }
+    }, delay);
+}
+
+function initSkipButton(): void {
+    const btnSkip = document.getElementById("btn-skip");
+    if (btnSkip) {
+        btnSkip.addEventListener("click", () => {
+            const current = quizData[currentQuestionIndex];
+            if (current) {
+                handleSkip(current.definition);
+            }
+        });
+    }
 }
 
 fetchQuizData();
